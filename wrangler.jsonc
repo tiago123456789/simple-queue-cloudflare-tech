@@ -1,0 +1,38 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "consumer",
+	"main": "src/index.ts",
+	"observability": {
+		"enabled": true
+	},
+	"durable_objects": {
+		"bindings": [
+			{
+				"class_name": "Queue",
+				"name": "QUEUE"
+			}
+		]
+	},
+
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["Queue"]
+		}
+	],
+
+	"vars": {
+		"API_KEY": "",
+		"INTERVAL_SECONDS_POLLING": 3,
+		"VISIBILITY_TIMEOUT": 30,
+		"CONSUMER_URL": "http://localhost:8787/consume",
+		// "CONSUMER_URL": "https://consumer.tiagorosadacost.workers.dev,https://consumer2.tiagorosadacost.workers.dev,https://consumer3.tiagorosadacost.workers.dev",
+		"ENABLED_CONSUMER_BATCH_MODE": true,
+		"TOTAL_MESSAGE_PROCESS_PER_TIME": 2000
+	},
+	"compatibility_date": "2025-09-24"
+}

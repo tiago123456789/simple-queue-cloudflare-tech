@@ -1,0 +1,30 @@
+{
+	"name": "consumer",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"deploy:all": "npm run deploy && npm run deploy2 && npm run deploy3",
+		"remove:all": "npm run remove && npm run remove2 && npm run remove3",
+		"deploy": "wrangler deploy",
+		"deploy2": "wrangler deploy --config ./wrangler_2.jsonc",
+		"deploy3": "wrangler deploy --config ./wrangler_3.jsonc",
+		"remove": "wrangler delete",
+		"remove2": "wrangler delete --config ./wrangler_2.jsonc",
+		"remove3": "wrangler delete --config ./wrangler_3.jsonc",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"cf-typegen": "wrangler types"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.8.19",
+		"typescript": "^5.5.2",
+		"vitest": "~3.2.0",
+		"wrangler": "^4.56.0"
+	},
+	"dependencies": {
+		"axios": "^1.13.2",
+		"hono": "^4.11.3"
+	}
+}
