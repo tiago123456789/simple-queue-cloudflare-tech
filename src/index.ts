@@ -2,12 +2,15 @@ import { Context, Hono } from 'hono';
 import handler from './handler.js';
 import MessageSliper from './queue/message-spliter.js';
 import { Env, Queue } from './queue/queue.js';
+import { cors } from 'hono/cors';
 
 const hashMap = new MessageSliper(2);
 
 const app = new Hono();
 
 export { Queue };
+
+app.use('*', cors());
 
 app.use('*', async (c, next) => {
 	const apiKey = c.req.header('x-api-key');
@@ -30,7 +33,6 @@ function getQueueInstane(c: Context, id?: string) {
 	if (!id) {
 		queueId = env.QUEUE.idFromName('QUEUE_DO');
 	} else {
-		console.log(hashMap.getId(id));
 		queueId = env.QUEUE.idFromName(hashMap.getId(id));
 	}
 	const queueStub = env.QUEUE.get(queueId) as DurableObjectStub<Queue>;
