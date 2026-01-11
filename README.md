@@ -53,3 +53,11 @@
 - Durable objects menory has limit 128MB.
 - Cloudflare workers allow 1000 request per minute.
 - Durable object allow 100.000 writes per day. PS: each message is 1 write to storage, 1 write update the index and 1 write to remove the register after process the message
+
+## Estimate cost for 1 million messages
+
+- 1 million Cloudflare workers => $0.33 + 0.33(1 million requests to process messages)
+- 1 million requests to Durable objects => $0.15(1 million save on queue) + $0.15(1 million operation process the messages from the queue)
+- 1 million reads => $0.001
+- 1 million writes => $1 + $1(1 million write to update the index table) + $1(1 million operation to delete the messages after processed with success)
+- Total => $0.33 + 0.33 +$0.15 x 2 + $0.001 + $1 x 3 => +/-$4
