@@ -18,6 +18,25 @@
 - Execute command **npm run deploy** to deploy the queue on Cloudflare workers.
 - Import the Insominia collection **Insomnia_2026-01-11.yaml**.
 
+### HOW TO SETUP THE SCHEDULER
+
+- Create a Supabase account
+- Setup the cronjob on integration page
+- Create a new cronjob
+  - Add a name
+  - Set the schedule to execute every 5 seconds
+  - Type **SQL Snippet**
+  - SQL snippet:
+  ```sql
+  select
+  net.http_get(
+      url:='YOUR_SIMPLE_QUEUE_APPLICATION_URL/process',
+      headers:=jsonb_build_object('x-api-key', 'YOUR_API_KEY'),
+      timeout_milliseconds:=60000
+  );
+  ```
+  - Click on button to save
+
 ## ARCHITECTURE
 
 ![Architecture](./architecture.png)
