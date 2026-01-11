@@ -12,18 +12,21 @@
 		"remove": "wrangler delete",
 		"remove2": "wrangler delete --config ./wrangler_2.jsonc",
 		"remove3": "wrangler delete --config ./wrangler_3.jsonc",
-		"dev": "wrangler dev",
+		"dev": "wrangler dev ",
 		"start": "wrangler dev",
 		"test": "vitest",
 		"cf-typegen": "wrangler types"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "^0.8.19",
+		"@cloudflare/vitest-pool-workers": "^0.8.71",
+		"@types/jest": "^30.0.0",
+		"jest-environment-node": "^30.2.0",
 		"typescript": "^5.5.2",
 		"vitest": "~3.2.0",
 		"wrangler": "^4.56.0"
 	},
 	"dependencies": {
+		"@libsql/client": "^0.17.0",
 		"axios": "^1.13.2",
 		"hono": "^4.11.3"
 	}

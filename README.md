@@ -1,11 +1,11 @@
 ## ABOUT
 
-- The project is a queue implementation using Durable objects and Cloudflare workers where has focus improve my knowledge about the technologies and because I don't want to pay $5 dollars to Cloudflare only to test the queue feature.
+- The project is a http request queue such as https://zeplo.io/ or Qstash from https://upstash.com/, but open source.
 
 ## TECHNOLOGIES
 
 - Cloudflare workers
-- Durable objects
+- Durable objects(Sqlite storage)
 - Node.js
 - Typescript
 
@@ -13,8 +13,4 @@
 
 - Durable objects menory has limit 128MB.
 - Cloudflare workers allow 1000 request per minute.
-- Durable objects is single thread, so allow one operation per time, how to scale more
-- How to improve the speed to publish the messages
-- How to consume more than 1000 messages, even Cloudflare workers has limit of 1000 request per minute.
-- How to make the Durable object get the messages and publish to consumers
-- How to bypass the Durable object sqlite storage limit of 100000 writes per day.
+- Durable object allow 100.000 writes per day. PS: each message is 1 write to storage, 1 write update the index and 1 write to remove the register after process the message

@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "consumer",
+	"name": "simple-queue",
 	"main": "src/index.ts",
 	"observability": {
 		"enabled": true
@@ -26,13 +26,11 @@
 	],
 
 	"vars": {
-		"API_KEY": "",
-		"INTERVAL_SECONDS_POLLING": 3,
-		"VISIBILITY_TIMEOUT": 30,
-		"CONSUMER_URL": "http://localhost:8787/consume",
-		// "CONSUMER_URL": "https://consumer.tiagorosadacost.workers.dev,https://consumer2.tiagorosadacost.workers.dev,https://consumer3.tiagorosadacost.workers.dev",
-		"ENABLED_CONSUMER_BATCH_MODE": false,
-		"TOTAL_MESSAGE_PROCESS_PER_TIME": 2000
+		"API_KEY": "c8567649-9d92-4564-b4b0-59b86586e786",
+		"HTTP_REQUEST_TIMEOUT": 10,
+		"TOTAL_RETRIES_BEFORE_DQL": 3,
+		"TOTAL_MESSAGES_PULL_PER_TIME": 4
 	},
-	"compatibility_date": "2025-09-24"
+	"compatibility_date": "2025-09-06",
+	"compatibility_flags": ["nodejs_compat"]
 }
