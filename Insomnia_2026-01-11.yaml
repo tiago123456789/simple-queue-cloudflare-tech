@@ -1,0 +1,170 @@
+type: collection.insomnia.rest/5.0
+name: "Flat "
+meta:
+  id: wrk_72feaa3b93bc41668779d9d0e97942fb
+  created: 1759003288979
+  modified: 1759003288979
+collection:
+  - name: Queue
+    meta:
+      id: fld_b3f892c653db4db9add8482a6e8f3d18
+      created: 1759003300240
+      modified: 1768068663391
+      sortKey: -1759003300241
+    children:
+      - url: "{{ _.BASE_URL
+          }}/publish?url=https://webhook-test.com/e01ac37d854e31969cb9877cfd489\
+          b3f"
+        name: Publish a message
+        meta:
+          id: req_c91d0313832b4b7fb3bf4935d6d4a048
+          created: 1759003302889
+          modified: 1768158285766
+          isPrivate: false
+          sortKey: -1759003302889
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"message": "Hi {% faker 'randomFirstName' %}, How are you doing",
+            	"timestamp": "{% faker 'timestamp' %}",
+            	"test": true
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+            id: pair_1fe190c2518243e1b6befb22c06bc788
+          - name: User-Agent
+            value: insomnia/11.0.2
+            id: pair_8b762b56b085431ea49456c29f4c9ebf
+          - id: pair_1be54e92eaf44b9cbf97ac39fb1a0851
+            name: x-api-key
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/process"
+        name: Consume message
+        meta:
+          id: req_31ece38059d24c598ddda09bae7a4205
+          created: 1768070990680
+          modified: 1768158300106
+          isPrivate: false
+          sortKey: -1759002857854
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+            id: pair_1fc087f34434423d81eab1cf82c38691
+          - name: User-Agent
+            value: insomnia/11.0.2
+            id: pair_db7026c183864343b5515c56bdceb02c
+          - id: pair_5a82cba085e049cabcfa768418bf6000
+            name: x-api-key
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/stats"
+        name: Queue stats
+        meta:
+          id: req_e647f2c834b94466ba4c825e8ec28084
+          created: 1768086967025
+          modified: 1768158290780
+          isPrivate: false
+          sortKey: -1759003080371.5
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+            id: pair_5751181fa1854d1fa3d2035a9e9823b1
+          - name: User-Agent
+            value: insomnia/11.0.2
+            id: pair_e6b9a1820bf04e9dbf6e12680fc708f0
+          - id: pair_5e1ae16138f24cf08a2a4788184a7208
+            name: x-api-key
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/dashboard"
+        name: Queue dashboard
+        meta:
+          id: req_0426e62b24ba474787b5edf691ada666
+          created: 1768138493875
+          modified: 1768158294469
+          isPrivate: false
+          sortKey: -1759002969112.75
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: text/html
+            id: pair_5751181fa1854d1fa3d2035a9e9823b1
+          - name: User-Agent
+            value: insomnia/11.0.2
+            id: pair_e6b9a1820bf04e9dbf6e12680fc708f0
+          - id: pair_5e1ae16138f24cf08a2a4788184a7208
+            name: x-api-key
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_f72bbe65b3fa88e8e7787534e56ed2626a92e3d1
+    created: 1759003289071
+    modified: 1759003289071
+environments:
+  name: Base Environment
+  meta:
+    id: env_f72bbe65b3fa88e8e7787534e56ed2626a92e3d1
+    created: 1759003289045
+    modified: 1759003289045
+    isPrivate: false
+  subEnvironments:
+    - name: dev
+      meta:
+        id: env_c1952b2d9ccc4b6689095d565407b89f
+        created: 1768139335369
+        modified: 1768139352224
+        isPrivate: false
+        sortKey: 1768139335369
+      data:
+        BASE_URL: http://localhost:8787
+    - name: staging
+      meta:
+        id: env_ddf7718f3dfd4a4c9c875d66adda75db
+        created: 1768139355841
+        modified: 1768139369362
+        isPrivate: false
+        sortKey: 1768139355841
+      data:
+        BASE_URL: https://simple-queue.tiagorosadacost.workers.dev

@@ -8,6 +8,45 @@
 - Durable objects(Sqlite storage)
 - Node.js
 - Typescript
+- Supbase(cronjob to trigger the consumer)
+
+## HOW TO RUN
+
+- Clone
+- Execute command **npm install**
+- Execute commnad **npm run dev** to run locally
+- Execute command **npm run deploy** to deploy the queue on Cloudflare workers.
+- Import the Insominia collection **Insomnia_2026-01-11.yaml**.
+
+## ARCHITECTURE
+
+![Architecture](./architecture.png)
+
+## LOAD TEST
+
+- You can find the load test script on folder **loadtest**
+
+┌─────────┬────────┬─────────┬─────────┬─────────┬────────────┬───────────┬─────────┐
+│ Stat │ 2.5% │ 50% │ 97.5% │ 99% │ Avg │ Stdev │ Max │
+├─────────┼────────┼─────────┼─────────┼─────────┼────────────┼───────────┼─────────┤
+│ Latency │ 497 ms │ 1418 ms │ 3297 ms │ 3606 ms │ 1440.77 ms │ 658.85 ms │ 3738 ms │
+└─────────┴────────┴─────────┴─────────┴─────────┴────────────┴───────────┴─────────┘
+┌───────────┬─────────┬─────────┬────────┬────────┬────────┬────────┬─────────┐
+│ Stat │ 1% │ 2.5% │ 50% │ 97.5% │ Avg │ Stdev │ Min │
+├───────────┼─────────┼─────────┼────────┼────────┼────────┼────────┼─────────┤
+│ Req/Sec │ 61 │ 61 │ 255 │ 737 │ 384.62 │ 228.4 │ 61 │
+├───────────┼─────────┼─────────┼────────┼────────┼────────┼────────┼─────────┤
+│ Bytes/Sec │ 37.2 kB │ 37.2 kB │ 156 kB │ 450 kB │ 235 kB │ 139 kB │ 37.2 kB │
+└───────────┴─────────┴─────────┴────────┴────────┴────────┴────────┴─────────┘
+
+## ENV DETAILS:
+
+```
+"API_KEY": "api_key_here"         // The api key is used to protect the application
+"HTTP_REQUEST_TIMEOUT": 10,       // The timeout in seconds the queue will wait before consider the request is invalid.
+"TOTAL_RETRIES_BEFORE_DQL": 3,    // The total of times try to process the message before send to the dead letter queue.
+"TOTAL_MESSAGES_PULL_PER_TIME": 4 // The total of messages pull of the queue and notify to the urls on same time.
+```
 
 ## LIMITATIONS ON FREE TIER
 

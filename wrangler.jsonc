@@ -24,9 +24,8 @@
 			"new_sqlite_classes": ["Queue"]
 		}
 	],
-
 	"vars": {
-		"API_KEY": "c8567649-9d92-4564-b4b0-59b86586e786",
+		"API_KEY": "api_key_here",
 		"HTTP_REQUEST_TIMEOUT": 10,
 		"TOTAL_RETRIES_BEFORE_DQL": 3,
 		"TOTAL_MESSAGES_PULL_PER_TIME": 4
