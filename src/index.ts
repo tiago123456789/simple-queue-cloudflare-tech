@@ -2,6 +2,7 @@ import { Context, Hono } from 'hono';
 import { Env, Queue } from './queue/queue.js';
 import { cors } from 'hono/cors';
 import { getHTML } from './utils/template.js';
+import * as hasher from './utils/hasher.js';
 
 export { Queue };
 
@@ -33,7 +34,6 @@ function getQueueInstance(c: Context) {
 
 app.post('/publish', async (c) => {
 	const url = c.req.query('url');
-	const id = crypto.randomUUID();
 	const payload = await c.req.json();
 
 	const queueStub = getQueueInstance(c);
@@ -41,8 +41,10 @@ app.post('/publish', async (c) => {
 		return c.json({ message: 'Queue not found' }, 500);
 	}
 
-	await queueStub.add(id, url as string, payload);
-	return c.json({ ok: true });
+	const jsonString = JSON.stringify(payload);
+	const id = await hasher.get(jsonString);
+	const storedMessage = await queueStub.add(id, url as string, payload);
+	return c.json({ storedMessage: storedMessage });
 });
 
 app.get('/process', async (c) => {
