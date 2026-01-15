@@ -128,12 +128,18 @@ export class Queue extends DurableObject {
 		requestTriggerParallel = [];
 	}
 
-	async add(id: string, url: string, payload: { [key: string]: any }) {
-		await this.ctx.storage.sql.exec(
-			`INSERT INTO queue (id, url, payload, created_at, status)
+	async add(id: string, url: string, payload: { [key: string]: any }): Promise<boolean> {
+		try {
+			await this.ctx.storage.sql.exec(
+				`INSERT INTO queue (id, url, payload, created_at, status)
 			VALUES (?, ?, ?, ?, ?)`,
-			...[id, url, JSON.stringify(payload), Date.now(), STATUS.PENDING]
-		);
+				...[id, url, JSON.stringify(payload), Date.now(), STATUS.PENDING]
+			);
+			return true;
+		} catch (error) {
+			console.error(error);
+			return Promise.resolve(false);
+		}
 	}
 
 	async getStats() {

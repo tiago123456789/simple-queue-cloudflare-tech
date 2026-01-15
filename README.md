@@ -8,7 +8,7 @@
 - Durable objects(Sqlite storage)
 - Node.js
 - Typescript
-- Supbase(cronjob to trigger the consumer)
+- Supabase(cronjob to trigger the consumer)
 
 ## HOW TO RUN
 
@@ -17,6 +17,12 @@
 - Execute commnad **npm run dev** to run locally
 - Execute command **npm run deploy** to deploy the queue on Cloudflare workers.
 - Import the Insominia collection **Insomnia_2026-01-11.yaml**.
+
+## Features
+
+- Publish message to stored on queue
+- Consume message stored
+- Prevent duplicated mesage
 
 ### HOW TO SETUP THE SCHEDULER
 
