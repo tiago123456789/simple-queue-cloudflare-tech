@@ -21,8 +21,14 @@
 ## Features
 
 - Publish message to stored on queue
-- Consume message stored
+- Consume message stored. PS: needs to setup a scheduler on Supabase.
 - Prevent duplicated mesage
+- Group Organization: Separate webhooks by app or task. (To add your own groups, edit the groups.json file in the project root.)
+
+### Setting Up Groups
+
+Open the groups.json file.
+Add a new name to the list. (Use simple names without special characters, like user_queue, product_queue, chatbot_queue.)
 
 ### HOW TO SETUP THE SCHEDULER
 
