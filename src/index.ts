@@ -3,6 +3,13 @@ import { Env, Queue } from './queue/queue.js';
 import { cors } from 'hono/cors';
 import { getHTML } from './utils/template.js';
 import * as hasher from './utils/hasher.js';
+import groups from './../groups.json' with { type: 'json' };
+import * as groupUtil from './utils/group.js';
+
+const groupsAllowed: { [key: string]: boolean } = {};
+groups.forEach((group: string) => {
+	groupsAllowed[`${group}`] = true;
+});
 
 export { Queue };
 
@@ -25,9 +32,9 @@ app.use('*', async (c, next) => {
 	await next();
 });
 
-function getQueueInstance(c: Context) {
+function getQueueInstance(c: Context, groupId?: string) {
 	const env = c.env as Env;
-	let queueId = env.QUEUE.idFromName('QUEUE_DO');
+	let queueId = env.QUEUE.idFromName(groupUtil.get(groupId));
 	const queueStub = env.QUEUE.get(queueId) as DurableObjectStub<Queue>;
 	return queueStub;
 }
@@ -36,7 +43,16 @@ app.post('/publish', async (c) => {
 	const url = c.req.query('url');
 	const payload = await c.req.json();
 
-	const queueStub = getQueueInstance(c);
+	if (!url) {
+		return c.json({ message: 'Url is required' }, 404);
+	}
+
+	let groupId = c.req.query('groupId');
+	if (!groupsAllowed[groupUtil.get(groupId)]) {
+		return c.json({ message: 'Group id not found' }, 404);
+	}
+
+	const queueStub = getQueueInstance(c, groupUtil.get(groupId));
 	if (queueStub === null) {
 		return c.json({ message: 'Queue not found' }, 500);
 	}
@@ -48,7 +64,12 @@ app.post('/publish', async (c) => {
 });
 
 app.get('/process', async (c) => {
-	const queueStub = getQueueInstance(c);
+	let groupId = c.req.query('groupId');
+	if (!groupsAllowed[groupUtil.get(groupId)]) {
+		return c.json({ message: 'Group id not found' }, 404);
+	}
+
+	const queueStub = getQueueInstance(c, groupUtil.get(groupId));
 	if (queueStub === null) {
 		return c.json({ message: 'Queue not found' }, 500);
 	}
@@ -59,7 +80,12 @@ app.get('/process', async (c) => {
 });
 
 app.get('/stats', async (c) => {
-	const queueStub = getQueueInstance(c);
+	let groupId = c.req.query('groupId');
+	if (!groupsAllowed[groupUtil.get(groupId)]) {
+		return c.json({ message: 'Group id not found' }, 404);
+	}
+
+	const queueStub = getQueueInstance(c, groupUtil.get(groupId));
 	if (queueStub === null) {
 		return c.json({ message: 'Durable Object not found' }, 500);
 	}
@@ -69,19 +95,30 @@ app.get('/stats', async (c) => {
 });
 
 app.get('/dashboard', async (c) => {
-	const queueStub = getQueueInstance(c);
+	const groupId = groupUtil.get(c.req.query('groupId'));
+	const queueStub = getQueueInstance(c, groupId);
 	if (queueStub === null) {
 		return c.json({ message: 'Durable Object not found' }, 500);
 	}
 
+	const apiKey = c.req.header('x-api-key') || c.req.query('x-api-key');
 	const stats = await queueStub.getStats();
+	const selectOptions = groups.map(g => `<option value="${g}" ${g === groupId ? 'selected' : ''}>${g}</option>`).join('');
 	const content = `
           <div class="px-4 py-0 sm:px-0">
+            <!-- Group Selector -->
+            <div class="mb-6">
+              <label for="groupSelect" class="block text-sm font-medium text-gray-700">Select Group</label>
+              <select id="groupSelect" onchange="window.location.href='/dashboard?x-api-key=${apiKey}&groupId=' + this.value" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                ${selectOptions}
+              </select>
+            </div>
+
             <!-- Tab Navigation -->
             <div class="mb-6">
               <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                  <a href="/dashboard" class="border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                  <a href="/dashboard?groupId=${groupId}" class="border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                     Overview
                   </a>
                 </nav>
