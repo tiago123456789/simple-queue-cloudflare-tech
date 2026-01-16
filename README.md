@@ -22,6 +22,8 @@
 
 - Publish message to stored on queue
 - Consume message stored. PS: needs to setup a scheduler on Supabase.
+- Retry
+- Dead letter queue
 - Prevent duplicated mesage
 - Group Organization: Separate webhooks by app or task. (To add your own groups, edit the groups.json file in the project root.)
 
@@ -29,6 +31,15 @@
 
 Open the groups.json file.
 Add a new name to the list. (Use simple names without special characters, like user_queue, product_queue, chatbot_queue.)
+
+### Setting Up Data Validation
+
+1. Take the JSON structure you expect for your data.
+2. Go to [this website](https://transform.tools/json-to-zod) and paste your JSON.
+3. It will create a simple code snippet.
+4. Copy the part that looks like `z.object({...})`.
+5. Open `src/schemas-validation.ts` and add your group name as a key, with the copied code as the value.
+6. Now, when webhooks come in for that group, they'll be checked automatically.
 
 ### HOW TO SETUP THE SCHEDULER
 
@@ -57,18 +68,25 @@ Add a new name to the list. (Use simple names without special characters, like u
 
 - You can find the load test script on folder **loadtest**
 
-┌─────────┬────────┬─────────┬─────────┬─────────┬────────────┬───────────┬─────────┐
+┌─────────┬────────┬────────┬─────────┬─────────┬───────────┬──────────┬─────────┐
 │ Stat │ 2.5% │ 50% │ 97.5% │ 99% │ Avg │ Stdev │ Max │
-├─────────┼────────┼─────────┼─────────┼─────────┼────────────┼───────────┼─────────┤
-│ Latency │ 497 ms │ 1418 ms │ 3297 ms │ 3606 ms │ 1440.77 ms │ 658.85 ms │ 3738 ms │
-└─────────┴────────┴─────────┴─────────┴─────────┴────────────┴───────────┴─────────┘
-┌───────────┬─────────┬─────────┬────────┬────────┬────────┬────────┬─────────┐
+├─────────┼────────┼────────┼─────────┼─────────┼───────────┼──────────┼─────────┤
+│ Latency │ 185 ms │ 429 ms │ 1600 ms │ 1616 ms │ 567.71 ms │ 395.1 ms │ 1819 ms │
+└─────────┴────────┴────────┴─────────┴─────────┴───────────┴──────────┴─────────┘
+┌───────────┬─────┬──────┬─────┬────────┬────────┬────────┬─────────┐
 │ Stat │ 1% │ 2.5% │ 50% │ 97.5% │ Avg │ Stdev │ Min │
-├───────────┼─────────┼─────────┼────────┼────────┼────────┼────────┼─────────┤
-│ Req/Sec │ 61 │ 61 │ 255 │ 737 │ 384.62 │ 228.4 │ 61 │
-├───────────┼─────────┼─────────┼────────┼────────┼────────┼────────┼─────────┤
-│ Bytes/Sec │ 37.2 kB │ 37.2 kB │ 156 kB │ 450 kB │ 235 kB │ 139 kB │ 37.2 kB │
-└───────────┴─────────┴─────────┴────────┴────────┴────────┴────────┴─────────┘
+├───────────┼─────┼──────┼─────┼────────┼────────┼────────┼─────────┤
+│ Req/Sec │ 0 │ 0 │ 0 │ 1,188 │ 214.15 │ 422.34 │ 2 │
+├───────────┼─────┼──────┼─────┼────────┼────────┼────────┼─────────┤
+│ Bytes/Sec │ 0 B │ 0 B │ 0 B │ 741 kB │ 133 kB │ 263 kB │ 1.27 kB │
+└───────────┴─────┴──────┴─────┴────────┴────────┴────────┴─────────┘
+
+Req/Bytes counts sampled once per second.
+
+# of samples: 14
+
+3k requests in 14.35s, 1.87 MB read
+2 errors (2 timeouts)
 
 ## ENV DETAILS:
 

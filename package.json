@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@libsql/client": "^0.17.0",
 		"axios": "^1.13.2",
-		"hono": "^4.11.3"
+		"hono": "^4.11.3",
+		"zod": "^4.3.5"
 	}
 }
