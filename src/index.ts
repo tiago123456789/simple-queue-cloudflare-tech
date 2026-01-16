@@ -5,6 +5,8 @@ import { getHTML } from './utils/template.js';
 import * as hasher from './utils/hasher.js';
 import groups from './../groups.json' with { type: 'json' };
 import * as groupUtil from './utils/group.js';
+import SCHEMAS_VALIDATIONS from './schemas-validation.js';
+import z from 'zod';
 
 const groupsAllowed: { [key: string]: boolean } = {};
 groups.forEach((group: string) => {
@@ -55,6 +57,21 @@ app.post('/publish', async (c) => {
 	const queueStub = getQueueInstance(c, groupUtil.get(groupId));
 	if (queueStub === null) {
 		return c.json({ message: 'Queue not found' }, 500);
+	}
+
+
+	try {
+		const schema = SCHEMAS_VALIDATIONS[groupUtil.get(groupId)] || null
+		if (schema) {
+			schema.parse(payload);
+		}
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			return c.json({
+				message: "Validation failed",
+				error: JSON.parse(error.message)
+			}, 400);
+		}
 	}
 
 	const jsonString = JSON.stringify(payload);
