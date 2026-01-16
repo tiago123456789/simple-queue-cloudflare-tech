@@ -1,112 +1,121 @@
-## ABOUT
+# Simple Queue for Cloudflare 🚀
 
-- The project is a http request queue such as https://zeplo.io/ or Qstash from https://upstash.com/, but open source.
+**A reliable, easy-to-use message queue system built on Cloudflare Workers. Open-source alternative to paid services like Zeplo or Qstash.**
 
-## TECHNOLOGIES
+## Why Choose Simple Queue? 🌟
 
-- Cloudflare workers
-- Durable objects(Sqlite storage)
-- Node.js
-- Typescript
-- Supabase(cronjob to trigger the consumer)
+Imagine sending messages between your apps without worrying about them getting lost or your systems crashing. Simple Queue makes it simple and affordable!
 
-## HOW TO RUN
+### Key Benefits:
 
-- Clone
-- Execute command **npm install**
-- Execute commnad **npm run dev** to run locally
-- Execute command **npm run deploy** to deploy the queue on Cloudflare workers.
-- Import the Insominia collection **Insomnia_2026-01-11.yaml**.
+- **Easy Setup**: Set it up once and forget about it. No complex server configurations needed.
+- **Pay Only for What You Use**: Serverless technology means you only pay for actual usage – save money!
+- **Reliable Delivery**: Messages are stored safely and delivered even if your apps are busy or offline.
+- **Automatic Retries**: If something goes wrong, it tries again automatically.
+- **Organize Your Messages**: Group messages by app or task to keep things tidy.
+- **No Tech Experts Needed**: Works with simple HTTP requests – if you know APIs, you're good to go.
+- **Cost-Effective**: No need for expensive DevOps teams or infrastructure.
+- **Secure**: Protect your messages with API keys.
 
-## Features
+## How It Works 🔄
 
-- Publish message to stored on queue
-- Consume message stored. PS: needs to setup a scheduler on Supabase.
-- Retry
-- Dead letter queue
-- Prevent duplicated mesage
-- Group Organization: Separate webhooks by app or task. (To add your own groups, edit the groups.json file in the project root.)
+1. **Send Messages**: Your app sends messages via simple HTTP requests.
+2. **Store Safely**: Messages are stored in a reliable queue.
+3. **Process Automatically**: A scheduler picks up messages and sends them to your destination apps.
+4. **Handle Errors**: If delivery fails, it retries or moves to a "dead letter" queue for review.
 
-### Setting Up Groups
+## Quick Start 🚀
 
-Open the groups.json file.
-Add a new name to the list. (Use simple names without special characters, like user_queue, product_queue, chatbot_queue.)
+1. **Clone the Project**: Download the code from GitHub.
+2. **Install Dependencies**: Run `npm install`.
+3. **Run Locally**: Use `npm run dev` to test on your machine.
+4. **Deploy**: Run `npm run deploy` to put it live on Cloudflare.
+5. **Set Up Scheduler**: Use Supabase to create a simple cron job that processes messages every few seconds.
 
-### Setting Up Data Validation
+For detailed setup, check the [full documentation](#how-to-run) below.
 
-1. Take the JSON structure you expect for your data.
-2. Go to [this website](https://transform.tools/json-to-zod) and paste your JSON.
-3. It will create a simple code snippet.
-4. Copy the part that looks like `z.object({...})`.
-5. Open `src/schemas-validation.ts` and add your group name as a key, with the copied code as the value.
-6. Now, when webhooks come in for that group, they'll be checked automatically.
+## Features ✨
 
-### HOW TO SETUP THE SCHEDULER
+- ✅ **Message Publishing**: Send messages to the queue easily.
+- ✅ **Automatic Processing**: Handles delivery in the background.
+- ✅ **Retry Mechanism**: Keeps trying if things don't work the first time.
+- ✅ **Dead Letter Queue**: Failed messages go here for manual review.
+- ✅ **Duplicate Prevention**: Avoids sending the same message twice.
+- ✅ **Group Organization**: Separate messages by app or task.
+- ✅ **Data Validation**: Ensures messages match expected formats.
 
-- Create a Supabase account
-- Setup the cronjob on integration page
-- Create a new cronjob
-  - Add a name
-  - Set the schedule to execute every 5 seconds
-  - Type **SQL Snippet**
-  - SQL snippet:
-  ```sql
-  select
-  net.http_get(
-      url:='YOUR_SIMPLE_QUEUE_APPLICATION_URL/process',
-      headers:=jsonb_build_object('x-api-key', 'YOUR_API_KEY'),
-      timeout_milliseconds:=60000
-  );
-  ```
-  - Click on button to save
-
-## ARCHITECTURE
+## Architecture Overview 🏗️
 
 ![Architecture](./architecture.png)
 
-## LOAD TEST
+## Performance & Costs 💰
 
-- You can find the load test script on folder **loadtest**
+- **Handles Thousands of Messages**: Tested with 3,000 requests in under 15 seconds.
+- **Low Cost**: Processing 1 million messages costs around +/-$4.
+- **Scalable**: Grows with your needs without extra setup.
 
-┌─────────┬────────┬────────┬─────────┬─────────┬───────────┬──────────┬─────────┐
-│ Stat │ 2.5% │ 50% │ 97.5% │ 99% │ Avg │ Stdev │ Max │
-├─────────┼────────┼────────┼─────────┼─────────┼───────────┼──────────┼─────────┤
-│ Latency │ 185 ms │ 429 ms │ 1600 ms │ 1616 ms │ 567.71 ms │ 395.1 ms │ 1819 ms │
-└─────────┴────────┴────────┴─────────┴─────────┴───────────┴──────────┴─────────┘
-┌───────────┬─────┬──────┬─────┬────────┬────────┬────────┬─────────┐
-│ Stat │ 1% │ 2.5% │ 50% │ 97.5% │ Avg │ Stdev │ Min │
-├───────────┼─────┼──────┼─────┼────────┼────────┼────────┼─────────┤
-│ Req/Sec │ 0 │ 0 │ 0 │ 1,188 │ 214.15 │ 422.34 │ 2 │
-├───────────┼─────┼──────┼─────┼────────┼────────┼────────┼─────────┤
-│ Bytes/Sec │ 0 B │ 0 B │ 0 B │ 741 kB │ 133 kB │ 263 kB │ 1.27 kB │
-└───────────┴─────┴──────┴─────┴────────┴────────┴────────┴─────────┘
+## Get Help 🤝
 
-Req/Bytes counts sampled once per second.
+Need assistance? We're here to help!
 
-# of samples: 14
+Email: [tiagorosadacost@gmail.com](mailto:tiagorosadacost@gmail.com)
 
-3k requests in 14.35s, 1.87 MB read
-2 errors (2 timeouts)
+---
 
-## ENV DETAILS:
+## Technical Details (For Developers) 🔧
 
+### Technologies Used
+
+- Cloudflare Workers
+- Durable Objects (SQLite storage)
+- Node.js & TypeScript
+- Supabase (for scheduling)
+
+### Full Setup Instructions
+
+- Clone the repository
+- Run `npm install`
+- Run `npm run dev` for local development
+- Run `npm run deploy` to deploy to Cloudflare Workers
+- Import the Insomnia collection `Insomnia_2026-01-11.yaml` for testing
+
+### Setting Up Groups
+
+Edit `groups.json` to add new groups (e.g., user_queue, product_queue).
+
+### Data Validation
+
+Use [this tool](https://transform.tools/json-to-zod) to generate validation schemas and add them to `src/schemas-validation.ts`.
+
+### Scheduler Setup
+
+Create a Supabase account and set up a cron job:
+
+```sql
+select net.http_get(
+    url:='YOUR_QUEUE_URL/process',
+    headers:=jsonb_build_object('x-api-key', 'YOUR_API_KEY'),
+    timeout_milliseconds:=60000
+);
 ```
-"API_KEY": "api_key_here"         // The api key is used to protect the application
-"HTTP_REQUEST_TIMEOUT": 10,       // The timeout in seconds the queue will wait before consider the request is invalid.
-"TOTAL_RETRIES_BEFORE_DQL": 3,    // The total of times try to process the message before send to the dead letter queue.
-"TOTAL_MESSAGES_PULL_PER_TIME": 4 // The total of messages pull of the queue and notify to the urls on same time.
-```
 
-## LIMITATIONS ON FREE TIER
+### Environment Variables
 
-- Durable objects menory has limit 128MB.
-- Cloudflare workers allow 1000 request per minute.
-- Durable object allow 100.000 writes per day. PS: each message is 1 write to storage, 1 write update the index and 1 write to remove the register after process the message
+- `API_KEY`: Protects your application
+- `HTTP_REQUEST_TIMEOUT`: Request timeout in seconds
+- `TOTAL_RETRIES_BEFORE_DQL`: Retry attempts before dead letter
+- `TOTAL_MESSAGES_PULL_PER_TIME`: Messages processed per batch
 
-## Estimate cost for 1 million messages
+### Limitations (Free Tier)
 
-- 1 million Cloudflare workers => $0.33 + 0.33(1 million requests to process messages)
-- 1 million requests to Durable objects => $0.15(1 million save on queue) + $0.15(1 million operation process the messages from the queue)
-- 1 million reads => $0.001
-- 1 million writes => $1 + $1(1 million write to update the index table) + $1(1 million operation to delete the messages after processed with success)
-- Total => $0.33 + 0.33 +$0.15 x 2 + $0.001 + $1 x 3 => +/-$4
+- 128MB memory limit
+- 1,000 requests/minute
+- 100,000 writes/day
+
+### Load Test Results
+
+Find scripts in `loadtest/` folder. Sample performance:
+
+- 3k requests in 14.35s
+- Average latency: 568ms
+- Up to 1,188 req/sec
