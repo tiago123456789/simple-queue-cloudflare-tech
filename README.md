@@ -2,6 +2,8 @@
 
 **A reliable, easy-to-use message queue system built on Cloudflare Workers. Open-source alternative to paid services like Zeplo or Qstash.**
 
+Read in [Portuguese](README-pt.md)
+
 ## Why Choose Simple Queue? 🌟
 
 Imagine sending messages between your apps without worrying about them getting lost or your systems crashing. Simple Queue makes it simple and affordable!
