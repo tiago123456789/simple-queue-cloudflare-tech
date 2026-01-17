@@ -7,29 +7,29 @@
 	"name": "simple-queue",
 	"main": "src/index.ts",
 	"observability": {
-		"enabled": true
+		"enabled": true,
 	},
 	"durable_objects": {
 		"bindings": [
 			{
 				"class_name": "Queue",
-				"name": "QUEUE"
-			}
-		]
+				"name": "QUEUE",
+			},
+		],
 	},
 
 	"migrations": [
 		{
 			"tag": "v1",
-			"new_sqlite_classes": ["Queue"]
-		}
+			"new_sqlite_classes": ["Queue"],
+		},
 	],
 	"vars": {
 		"API_KEY": "api_key_here",
-		"HTTP_REQUEST_TIMEOUT": 10,
+		"HTTP_REQUEST_TIMEOUT": 5, // in seconds
 		"TOTAL_RETRIES_BEFORE_DQL": 3,
-		"TOTAL_MESSAGES_PULL_PER_TIME": 4
+		"TOTAL_MESSAGES_PULL_PER_TIME": 4,
 	},
 	"compatibility_date": "2025-09-06",
-	"compatibility_flags": ["nodejs_compat"]
+	"compatibility_flags": ["nodejs_compat"],
 }
