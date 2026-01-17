@@ -1,10 +1,18 @@
-# Simple Queue for Cloudflare 🚀
+# Simple Queue
 
-**A reliable, easy-to-use message queue system built on Cloudflare Workers. Open-source alternative to paid services like Zeplo or Qstash.**
+A reliable, easy-to-use message queue system built on Cloudflare Workers. Open-source alternative to paid services like Zeplo or Qstash.
+
+The queue for people only know What's API and how to make requests
 
 Read in [Portuguese](README-pt.md)
 
-## Why Choose Simple Queue? 🌟
+## Why Choose Simple Queue?
+
+- Set up once
+- Scales with your needs without changing configurations
+- Pay only for what you use
+- You need only to know what an API is and how to make HTTP requests
+- You need to run automations or actions that take a long time, and at the same time limit actions to avoid overloading your server.
 
 Imagine sending messages between your apps without worrying about them getting lost or your systems crashing. Simple Queue makes it simple and affordable!
 
@@ -19,14 +27,14 @@ Imagine sending messages between your apps without worrying about them getting l
 - **Cost-Effective**: No need for expensive DevOps teams or infrastructure.
 - **Secure**: Protect your messages with API keys.
 
-## How It Works 🔄
+## How It Works
 
 1. **Send Messages**: Your app sends messages via simple HTTP requests.
 2. **Store Safely**: Messages are stored in a reliable queue.
 3. **Process Automatically**: A scheduler picks up messages and sends them to your destination apps.
 4. **Handle Errors**: If delivery fails, it retries or moves to a "dead letter" queue for review.
 
-## Quick Start 🚀
+## Quick Start
 
 1. **Clone the Project**: Download the code from GitHub.
 2. **Install Dependencies**: Run `npm install`.
@@ -36,27 +44,30 @@ Imagine sending messages between your apps without worrying about them getting l
 
 For detailed setup, check the [full documentation](#how-to-run) below.
 
-## Features ✨
+## Features
 
-- ✅ **Message Publishing**: Send messages to the queue easily.
-- ✅ **Automatic Processing**: Handles delivery in the background.
-- ✅ **Retry Mechanism**: Keeps trying if things don't work the first time.
-- ✅ **Dead Letter Queue**: Failed messages go here for manual review.
-- ✅ **Duplicate Prevention**: Avoids sending the same message twice.
-- ✅ **Group Organization**: Separate messages by app or task.
-- ✅ **Data Validation**: Ensures messages match expected formats.
+- **Message Publishing**: Send messages to the queue easily.
+- **Automatic Processing**: Handles delivery in the background.
+- **Retry Mechanism**: Keeps trying if things don't work the first time.
+- **Dead Letter Queue**: Failed messages go here for manual review.
+- **Duplicate Prevention**: Avoids sending the same message twice.
+- **Group Organization**: Separate messages by app or task.
+- **Data Validation**: Ensures messages match expected formats.
 
-## Architecture Overview 🏗️
+## Architecture Overview
 
 ![Architecture](./architecture.png)
 
-## Performance & Costs 💰
+## Performance & Costs
 
-- **Handles Thousands of Messages**: Tested with 3,000 requests in under 15 seconds.
-- **Low Cost**: Processing 1 million messages costs around +/-$4.
+- **Low Cost**: Processing 1 million messages costs around $5.
+  - 1 million Cloudflare Workers to publish: $0.33
+  - 1 million Cloudflare Workers to consume the messages: $0.33
+  - 1 million Cloudflare Durable Objects storage for the queue's data: $2
+  - 1 million Cloudflare Durable Objects get and delete the queue's data: $2 (update register when consuming the message and delete operation when message processed successfully)
 - **Scalable**: Grows with your needs without extra setup.
 
-## Get Help 🤝
+## Get Help
 
 Need assistance? We're here to help!
 
@@ -64,7 +75,7 @@ Email: [tiagorosadacost@gmail.com](mailto:tiagorosadacost@gmail.com)
 
 ---
 
-## Technical Details (For Developers) 🔧
+## Technical Details (For Developers)
 
 ### Technologies Used
 
