@@ -72,7 +72,7 @@ export class Queue extends DurableObject {
 	private async incrementRetriesById(id: string) {
 		await this.ctx.storage.sql.exec(
 			`UPDATE queue SET status = ?, retries = retries + 1, created_at = ? WHERE id = ?`,
-			...[STATUS.PENDING, Date.now(), id]
+			...[STATUS.PENDING, Date.now(), id],
 		);
 	}
 
@@ -81,7 +81,7 @@ export class Queue extends DurableObject {
 			`UPDATE queue SET status = ?
 			WHERE id in (SELECT id FROM queue WHERE status = ? ORDER BY created_at ASC LIMIT ?)
 			RETURNING id, url, payload, retries;`,
-			...[STATUS.PROCESSING, STATUS.PENDING, limit]
+			...[STATUS.PROCESSING, STATUS.PENDING, limit],
 		);
 
 		const items = results.toArray();
@@ -103,7 +103,7 @@ export class Queue extends DurableObject {
 		await this.ctx.storage.sql.exec(
 			`INSERT INTO queue_dlq(id, url, payload, created_at, status)
 			VALUES (?, ?, ?, ?, ?)`,
-			...[item.id, item.url, JSON.stringify(item.payload), Date.now(), STATUS.PENDING]
+			...[item.id, item.url, JSON.stringify(item.payload), Date.now(), STATUS.PENDING],
 		);
 	}
 
@@ -133,7 +133,7 @@ export class Queue extends DurableObject {
 			await this.ctx.storage.sql.exec(
 				`INSERT INTO queue (id, url, payload, created_at, status)
 			VALUES (?, ?, ?, ?, ?)`,
-				...[id, url, JSON.stringify(payload), Date.now(), STATUS.PENDING]
+				...[id, url, JSON.stringify(payload), Date.now(), STATUS.PENDING],
 			);
 			return true;
 		} catch (error) {
@@ -142,20 +142,42 @@ export class Queue extends DurableObject {
 		}
 	}
 
+	async getMessages(limit: number = 10, offset: number = 0) {
+		const results = await this.ctx.storage.sql.exec(
+			`SELECT id, url, payload, created_at, status, retries FROM queue ORDER BY created_at ASC LIMIT ? OFFSET ?`,
+			...[limit, offset],
+		);
+
+		const items = results.toArray();
+		return items.map((item) => ({
+			id: item.id,
+			url: item.url,
+			payload: item.payload,
+			created_at: item.created_at,
+			status: item.status,
+			retries: item.retries,
+		}));
+	}
+
+	async getTotalMessages() {
+		const result = await this.ctx.storage.sql.exec(`SELECT count(id) as total FROM queue;`);
+		return result.toArray()[0].total;
+	}
+
 	async getStats() {
 		const totalMessagesDql = await this.ctx.storage.sql.exec(`SELECT count(id) as total FROM queue_dlq;`);
 		const totalMessagesPending = await this.ctx.storage.sql.exec(
 			`SELECT count(id) as total FROM queue where status = ? AND retries = 0;`,
-			...[STATUS.PENDING]
+			...[STATUS.PENDING],
 		);
 		const totalMessagesProcessing = await this.ctx.storage.sql.exec(
 			`SELECT count(id) as total FROM queue where status = ?;`,
-			...[STATUS.PROCESSING]
+			...[STATUS.PROCESSING],
 		);
 
 		const totalMessagesWaitingRetry = await this.ctx.storage.sql.exec(
 			`SELECT count(id) as total FROM queue where retries > 0 and status = ?;`,
-			...[STATUS.PENDING]
+			...[STATUS.PENDING],
 		);
 
 		return {

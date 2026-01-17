@@ -1,12 +1,20 @@
-# Simple Queue for Cloudflare 🚀
+# Fila Simples
 
-**Um sistema de fila de mensagens confiável e fácil de usar construído no Cloudflare Workers. Alternativa de código aberto a serviços pagos como Zeplo ou Qstash.**
+Um sistema de fila de mensagens confiável e fácil de usar construído no Cloudflare Workers. Alternativa de código aberto a serviços pagos como Zeplo ou Qstash.
+
+A fila para pessoas que só sabem o que é API e como fazer solicitações
 
 Leia em [Inglês](README.md)
 
-## Por que escolher Simple Queue? 🌟
+## Por Que Escolher a Fila Simples?
 
-Imagine enviar mensagens entre seus apps sem se preocupar com elas se perdendo ou seus sistemas falhando. Simple Queue torna isso simples e acessível!
+- Configure uma vez
+- Escala com suas necessidades sem alterar configurações
+- Pague apenas pelo que usa
+- Você precisa apenas saber o que é uma API e como fazer solicitações HTTP
+- Você precisa executar automações ou ações que levam muito tempo, e ao mesmo tempo limitar ações para evitar sobrecarregar seu servidor.
+
+Imagine enviar mensagens entre seus apps sem se preocupar com elas se perderem ou seus sistemas travarem. A Fila Simples torna isso simples e acessível!
 
 ### Benefícios Principais:
 
@@ -19,14 +27,14 @@ Imagine enviar mensagens entre seus apps sem se preocupar com elas se perdendo o
 - **Econômico**: Não precisa de equipes caras de DevOps ou infraestrutura.
 - **Seguro**: Proteja suas mensagens com chaves de API.
 
-## Como Funciona 🔄
+## Como Funciona
 
 1. **Envie Mensagens**: Seu app envia mensagens via solicitações HTTP simples.
 2. **Armazene com Segurança**: Mensagens são armazenadas em uma fila confiável.
 3. **Processe Automaticamente**: Um agendador pega as mensagens e as envia para seus apps de destino.
-4. **Trate Erros**: Se a entrega falhar, tenta novamente ou move para uma "fila de cartas mortas" para revisão.
+4. **Trate Erros**: Se a entrega falhar, tenta novamente ou move para uma fila de "carta morta" para revisão.
 
-## Início Rápido 🚀
+## Início Rápido
 
 1. **Clone o Projeto**: Baixe o código do GitHub.
 2. **Instale Dependências**: Execute `npm install`.
@@ -34,29 +42,32 @@ Imagine enviar mensagens entre seus apps sem se preocupar com elas se perdendo o
 4. **Implante**: Execute `npm run deploy` para colocar em produção no Cloudflare.
 5. **Configure o Agendador**: Use Supabase para criar um trabalho cron simples que processa mensagens a cada poucos segundos.
 
-Para configuração detalhada, verifique a [documentação completa](#how-to-run) abaixo.
+Para configuração detalhada, verifique a [documentação completa](#como-executar) abaixo.
 
-## Recursos ✨
+## Recursos
 
-- ✅ **Publicação de Mensagens**: Envie mensagens para a fila facilmente.
-- ✅ **Processamento Automático**: Trata a entrega em segundo plano.
-- ✅ **Mecanismo de Tentativa**: Continua tentando se não funcionar da primeira vez.
-- ✅ **Fila de Cartas Mortas**: Mensagens falhadas vão para cá para revisão manual.
-- ✅ **Prevenção de Duplicatas**: Evita enviar a mesma mensagem duas vezes.
-- ✅ **Organização por Grupos**: Separe mensagens por app ou tarefa.
-- ✅ **Validação de Dados**: Garante que as mensagens correspondam aos formatos esperados.
+- **Publicação de Mensagens**: Envie mensagens para a fila facilmente.
+- **Processamento Automático**: Trata da entrega em segundo plano.
+- **Mecanismo de Tentativa**: Continua tentando se as coisas não funcionarem na primeira vez.
+- **Fila de Carta Morta**: Mensagens falhadas vão para aqui para revisão manual.
+- **Prevenção de Duplicatas**: Evita enviar a mesma mensagem duas vezes.
+- **Organização por Grupos**: Separe mensagens por app ou tarefa.
+- **Validação de Dados**: Garante que as mensagens correspondam aos formatos esperados.
 
-## Visão Geral da Arquitetura 🏗️
+## Visão Geral da Arquitetura
 
-![Architecture](./architecture.png)
+![Arquitetura](./architecture.png)
 
-## Performance e Custos 💰
+## Desempenho e Custos
 
-- **Lida com Milhares de Mensagens**: Testado com 3.000 solicitações em menos de 15 segundos.
-- **Baixo Custo**: Processar 1 milhão de mensagens custa cerca de +/-$4.
+- **Custo Baixo**: Processar 1 milhão de mensagens custa cerca de $5.
+  - 1 milhão de Cloudflare Workers para publicar: $0.33
+  - 1 milhão de Cloudflare Workers para consumir as mensagens: $0.33
+  - 1 milhão de Cloudflare Durable Objects armazenamento para os dados da fila: $2
+  - 1 milhão de Cloudflare Durable Objects obter e deletar os dados da fila: $2 (atualizar registro ao consumir a mensagem e operação de exclusão quando a mensagem for processada com sucesso)
 - **Escalável**: Cresce com suas necessidades sem configuração extra.
 
-## Obtenha Ajuda 🤝
+## Obtenha Ajuda
 
 Precisa de assistência? Estamos aqui para ajudar!
 
@@ -64,7 +75,7 @@ Email: [tiagorosadacost@gmail.com](mailto:tiagorosadacost@gmail.com)
 
 ---
 
-## Detalhes Técnicos (Para Desenvolvedores) 🔧
+## Detalhes Técnicos (Para Desenvolvedores)
 
 ### Tecnologias Usadas
 
@@ -87,7 +98,7 @@ Edite `groups.json` para adicionar novos grupos (ex.: user_queue, product_queue)
 
 ### Validação de Dados
 
-Use [esta ferramenta](https://transform.tools/json-to-zod) para gerar esquemas de validação e adicione a `src/schemas-validation.ts`.
+Use [esta ferramenta](https://transform.tools/json-to-zod) para gerar esquemas de validação e adicioná-los a `src/schemas-validation.ts`.
 
 ### Configuração do Agendador
 
@@ -105,18 +116,18 @@ select net.http_get(
 
 - `API_KEY`: Protege sua aplicação
 - `HTTP_REQUEST_TIMEOUT`: Tempo limite de solicitação em segundos
-- `TOTAL_RETRIES_BEFORE_DQL`: Tentativas antes da fila de cartas mortas
+- `TOTAL_RETRIES_BEFORE_DQL`: Tentativas de repetição antes da carta morta
 - `TOTAL_MESSAGES_PULL_PER_TIME`: Mensagens processadas por lote
 
-### Limitações (Tier Gratuito)
+### Limitações (Plano Gratuito)
 
 - Limite de memória de 128MB
 - 1.000 solicitações/minuto
 - 100.000 gravações/dia
 
-### Resultados do Teste de Carga
+### Resultados de Teste de Carga
 
-Encontre scripts na pasta `loadtest/`. Performance de exemplo:
+Encontre scripts na pasta `loadtest/`. Desempenho de exemplo:
 
 - 3k solicitações em 14.35s
 - Latência média: 568ms
